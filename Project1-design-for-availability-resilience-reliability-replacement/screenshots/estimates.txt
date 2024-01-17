@@ -1,0 +1,20 @@
+
+In scenarios where an RDS database instance's volumes are compromised and recreation from backups is necessary,
+the typical Recovery Point Objective (RPO) across Single-AZ, Multi-AZ, and even scenarios hovers around 5 minutes.
+This aligns with the targeted interval for RDS to conduct log backups to S3, signifying a potential loss of 5 minutes of
+log data in the event of a database volume loss. In a Single-AZ setup, the sole live copy of data resides in the EBS volume,
+and while EBS ensures durability and availability through mirroring, certain situations may necessitate recovery from backups,
+establishing the 5-minute log backup interval as a relevant RPO benchmark.
+
+In a Multi-AZ configuration, the likelihood of data loss is significantly diminished due to the maintenance
+of a synchronous copy of the volume in a separate data center (AZ). With automatic failover in case of primary instance failure,
+Multi-AZ ensures an RTO of 1-2 minutes and an RPO approaching zero, as there is no data loss in common failures.
+Even in extreme scenarios like natural disasters impacting the primary data center, the secondary instance seamlessly takes over
+with no data loss, justifying the assumption of an RPO of 0.
+
+In the context of a Single AZ outage within a multi-AZ deployment,
+synchronous replication and automatic failover contribute to minimal RTO and RPO.
+Conversely, in the case of a single region outage within a multi-region deployment,
+manual intervention is required to promote the read replica, introducing slightly greater RTO and RPO due to asynchronous replication.
+These distinctions highlight the varying levels of automation and replication mechanisms influencing recovery objectives in different
+deployment scenarios.
